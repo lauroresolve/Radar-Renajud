@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Radar Renajud — Veja o risco antes da compra.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080c14;--bg2:#0d1422;--bg3:#111827;
+  --surface:#141e30;--surface2:#1a2640;
+  --border:rgba(0,180,255,0.1);--border2:rgba(0,180,255,0.22);--border3:rgba(0,180,255,0.35);
+  --neon:#00b4ff;--neon2:#0070ff;--neon3:#00d4ff;
+  --neon-glow:rgba(0,180,255,0.18);--neon-glow2:rgba(0,180,255,0.07);
+  --text:#e8f4ff;--text2:#7a9cbf;--text3:#3d5570;
+  --green:#00e676;--green-bg:rgba(0,230,118,0.07);--green-b:rgba(0,230,118,0.18);
+  --yellow:#ffb300;--yellow-bg:rgba(255,179,0,0.07);--yellow-b:rgba(255,179,0,0.2);
+  --red:#ff4040;--red-bg:rgba(255,64,64,0.07);--red-b:rgba(255,64,64,0.2);
+  --purple:#a78bfa;--purple-bg:rgba(167,139,250,0.07);
+  --r:12px;--r2:8px;--r3:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;padding-bottom:68px}
+body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(0,180,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,180,255,0.025) 1px,transparent 1px);background-size:44px 44px;pointer-events:none}
+
+header{position:sticky;top:0;z-index:200;background:rgba(8,12,20,0.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 16px;height:54px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:9px;font-size:16px;font-weight:800;letter-spacing:-0.3px;text-decoration:none;color:var(--text);cursor:pointer}
+.logo-icon{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,var(--neon),var(--neon2));display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;box-shadow:0 0 16px var(--neon-glow)}
+.logo em{color:var(--neon);font-style:normal}
+.hdr-r{display:flex;align-items:center;gap:6px}
+.btn-xs{padding:6px 13px;border-radius:6px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all .18s;letter-spacing:.2px}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2)}
+.btn-ghost:hover{background:var(--surface);color:var(--neon)}
+.btn-neon{background:linear-gradient(135deg,var(--neon),var(--neon2));color:#000}
+.user-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--neon),var(--neon2));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#000;cursor:pointer;border:none;flex-shrink:0}
+.notif-btn{width:30px;height:30px;border-radius:50%;background:var(--surface);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;position:relative}
+.notif-dot{position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:var(--red);border:2px solid var(--bg)}
+
+.page{display:none;position:relative;z-index:1;min-height:calc(100vh - 54px - 68px)}
+.page.active{display:block}
+.flex-center{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 54px - 68px);padding:24px 16px}
+
+/* HOME */
+.hero{padding:36px 20px 24px;text-align:center;max-width:440px;margin:0 auto}
+.badge-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(0,180,255,0.07);border:1px solid rgba(0,180,255,0.18);border-radius:99px;padding:5px 14px;font-size:11px;font-weight:700;color:var(--neon);margin-bottom:18px;letter-spacing:.8px;text-transform:uppercase}
+.bdot{width:6px;height:6px;border-radius:50%;background:var(--neon);animation:bpulse 2s infinite}
+@keyframes bpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.7)}}
+.hero h1{font-size:30px;font-weight:800;line-height:1.15;letter-spacing:-1px;margin-bottom:10px}
+.hero h1 em{color:var(--neon);font-style:normal}
+.hero p{font-size:14px;color:var(--text2);line-height:1.65;max-width:300px;margin:0 auto 28px;font-weight:400}
+.s-card{background:var(--surface);border:1px solid var(--border2);border-radius:18px;padding:20px;max-width:440px;margin:0 auto;box-shadow:0 8px 48px rgba(0,0,0,.4)}
+.f-label{font-size:10px;font-weight:800;color:var(--neon);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.f-label .opt{color:var(--text3);font-weight:400;text-transform:none;letter-spacing:0;font-size:10px}
+.f-label .req{color:var(--red);font-size:13px}
+.iw{position:relative;margin-bottom:12px}
+.iw input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);padding:13px 42px 13px 14px;font-family:'DM Mono',monospace;font-size:14px;font-weight:500;color:var(--text);letter-spacing:.8px;text-transform:uppercase;outline:none;transition:all .2s;-webkit-appearance:none}
+.iw input::placeholder{color:var(--text3);font-weight:400;letter-spacing:0;text-transform:none;font-size:13px}
+.iw input:focus{border-color:var(--neon);box-shadow:0 0 0 3px var(--neon-glow2)}
+.iw input.valid{border-color:rgba(0,230,118,.35)}
+.iw input.invalid{border-color:rgba(255,64,64,.4)}
+.iico{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--text3);pointer-events:none}
+.sep-or{display:flex;align-items:center;gap:10px;margin:14px 0;font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.sep-or::before,.sep-or::after{content:'';flex:1;height:1px;background:var(--border)}
+.btn-analyze{width:100%;background:linear-gradient(135deg,var(--neon3),var(--neon),var(--neon2));border:none;border-radius:var(--r2);padding:15px;font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:#000;cursor:pointer;letter-spacing:.5px;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;position:relative;overflow:hidden;box-shadow:0 4px 24px rgba(0,180,255,.25)}
+.btn-analyze:hover{transform:translateY(-1px);box-shadow:0 6px 32px rgba(0,180,255,.35)}
+.btn-analyze:active{transform:scale(.98)}
+.sec-note{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:12px;font-size:11px;color:var(--text3)}
+.feat-wrap{padding:20px 16px;max-width:440px;margin:0 auto}
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.feat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px}
+.ficon{font-size:20px;margin-bottom:8px}
+.feat-card h3{font-size:12px;font-weight:700;margin-bottom:3px}
+.feat-card p{font-size:11px;color:var(--text2);line-height:1.5;font-weight:400}
+.stats-row{display:flex;justify-content:space-around;padding:16px 20px;border-top:1px solid var(--border);max-width:440px;margin:0 auto}
+.stat-num{font-size:20px;font-weight:800;color:var(--neon);text-align:center}
+.stat-lbl{font-size:10px;color:var(--text3);text-align:center;margin-top:2px;font-weight:400}
+
+/* LOADING */
+#page-loading{display:none}
+#page-loading.active{display:flex}
+.ld-wrap{text-align:center;width:100%;max-width:340px}
+.ld-radar{width:150px;height:150px;margin:0 auto 24px;position:relative}
+.ld-ring{position:absolute;inset:0;border-radius:50%;border:1px solid var(--border2)}
+.ld-ring:nth-child(1){animation:ldr 2.6s linear infinite}
+.ld-ring:nth-child(2){inset:18px;animation:ldr 2.6s linear .65s infinite}
+.ld-ring:nth-child(3){inset:36px;animation:ldr 2.6s linear 1.3s infinite}
+.ld-ring:nth-child(4){inset:54px;animation:ldr 2.6s linear 1.95s infinite}
+@keyframes ldr{0%{transform:scale(.3);opacity:0}60%{opacity:.5}100%{transform:scale(1.6);opacity:0}}
+.ld-sweep{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,transparent 0deg,rgba(0,180,255,.14) 65deg,transparent 65deg);animation:sweep 2s linear infinite}
+@keyframes sweep{to{transform:rotate(360deg)}}
+.ld-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--neon),var(--neon2));display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 0 24px var(--neon-glow)}
+.ld-title{font-size:20px;font-weight:800;margin-bottom:6px}
+.ld-sub{font-size:13px;color:var(--text2);margin-bottom:24px;font-weight:400}
+.ld-steps{text-align:left}
+.ld-step{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);font-weight:500;transition:color .3s}
+.ld-step:last-child{border:none}
+.ld-step.done{color:var(--text)}
+.ld-step.active{color:var(--neon)}
+.ld-ico{width:22px;height:22px;border-radius:50%;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;transition:all .3s;font-family:'DM Mono',monospace}
+.ld-step.done .ld-ico{background:var(--green);border-color:var(--green);color:#000}
+.ld-step.active .ld-ico{background:var(--neon);border-color:var(--neon);color:#000;animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.prog-wrap{background:var(--surface);border-radius:99px;height:3px;margin-top:20px;overflow:hidden}
+.prog-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--neon2),var(--neon));width:0%;transition:width .4s ease}
+
+/* RESULT */
+#page-result{padding:16px 14px 24px;max-width:480px;margin:0 auto}
+.res-top{text-align:center;margin-bottom:16px}
+.plate-tag{display:inline-flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:6px 16px;font-family:'DM Mono',monospace;font-size:17px;font-weight:500;letter-spacing:2px;margin-bottom:10px}
+.res-top p{font-size:13px;color:var(--text2);font-weight:400}
+.rv-card{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:20px 16px;margin-bottom:14px;text-align:center;position:relative;overflow:hidden}
+.rv-lbl{font-size:10px;font-weight:800;color:var(--neon);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+.rv-vis{width:160px;height:160px;margin:0 auto 14px;position:relative}
+.rvr{position:absolute;border-radius:50%;border:1px solid rgba(0,180,255,.15)}
+.rvr:nth-child(1){inset:0}.rvr:nth-child(2){inset:25px}.rvr:nth-child(3){inset:50px}.rvr:nth-child(4){inset:75px}
+.rv-ch{position:absolute;background:rgba(0,180,255,.07)}
+.rv-ch.h{top:50%;left:0;right:0;height:1px}
+.rv-ch.v{left:50%;top:0;bottom:0;width:1px}
+.rv-swp{position:absolute;inset:0;border-radius:50%;animation:sweep 3s linear infinite}
+.rv-dot{position:absolute;border-radius:50%;animation:dblink 1.8s infinite}
+@keyframes dblink{0%,100%{opacity:1}50%{opacity:.2}}
+.rv-ctr{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%}
+.rv-score{font-size:44px;font-weight:800;line-height:1;margin-bottom:3px}
+.rv-score-lbl{font-size:12px;font-weight:500;color:var(--text2)}
+.status-pill{display:inline-flex;align-items:center;gap:6px;padding:7px 18px;border-radius:99px;font-size:13px;font-weight:700;margin-top:10px}
+.sec-title{font-size:10px;font-weight:800;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:9px}
+.checks-list{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+.chk{display:flex;align-items:center;gap:11px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:11px 13px}
+.chk-ico{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.ok{background:var(--green-bg);color:var(--green)}.warn{background:var(--yellow-bg);color:var(--yellow)}.bad{background:var(--red-bg);color:var(--red)}
+.chk-info h4{font-size:12px;font-weight:700;margin-bottom:2px}
+.chk-info p{font-size:11px;color:var(--text2);font-weight:400}
+.rec-box{border-radius:var(--r);padding:14px;margin-bottom:14px;border:1px solid}
+.rec-ttl{font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:6px}
+.rec-txt{font-size:13px;font-weight:500;line-height:1.55}
+.action-row{display:flex;gap:8px;margin-bottom:8px}
+.btn-action{flex:1;padding:12px 6px;border-radius:var(--r2);font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;border:1px solid var(--border2);background:var(--surface);color:var(--text2);display:flex;align-items:center;justify-content:center;gap:5px}
+.btn-action:hover{background:var(--surface2);color:var(--neon)}
+.btn-action.primary{background:linear-gradient(135deg,var(--neon),var(--neon2));color:#000;border:none}
+
+/* HISTORY */
+#page-history{padding:16px 14px 24px;max-width:480px;margin:0 auto}
+.pg-hdr{margin-bottom:16px}
+.pg-hdr h2{font-size:21px;font-weight:800}
+.pg-hdr p{font-size:13px;color:var(--text2);font-weight:400;margin-top:3px}
+.credits-bar{background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border2);border-radius:var(--r);padding:13px 14px;display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.cr-num{font-size:24px;font-weight:800;color:var(--neon);line-height:1}
+.cr-lbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-top:1px}
+.cr-info{flex:1}
+.cr-info b{font-size:12px;font-weight:700}
+.cr-info p{font-size:11px;color:var(--text2);font-weight:400}
+.btn-buy{background:linear-gradient(135deg,var(--neon),var(--neon2));border:none;border-radius:6px;padding:8px 13px;font-family:'Syne',sans-serif;font-size:11px;font-weight:800;color:#000;cursor:pointer;white-space:nowrap}
+.hist-empty{text-align:center;padding:48px 20px;color:var(--text3);font-size:13px}
+.hist-empty .ei{font-size:36px;margin-bottom:12px}
+.hist-list{display:flex;flex-direction:column;gap:8px}
+.hist-item{display:flex;align-items:center;gap:11px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:13px;cursor:pointer;transition:all .2s}
+.hist-item:hover{border-color:var(--border2);background:var(--surface2)}
+.h-plate{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;flex:1}
+.h-date{font-size:10px;color:var(--text3);font-weight:400;margin-top:2px}
+.h-score{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0}
+.sl{background:var(--green-bg);color:var(--green);border:1px solid var(--green-b)}
+.sm{background:var(--yellow-bg);color:var(--yellow);border:1px solid var(--yellow-b)}
+.sh{background:var(--red-bg);color:var(--red);border:1px solid var(--red-b)}
+.ftabs{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:2px}
+.ftabs::-webkit-scrollbar{display:none}
+.ftab{padding:6px 14px;border-radius:99px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text3);white-space:nowrap;font-family:'Syne',sans-serif;transition:all .18s}
+.ftab.active{background:var(--neon);color:#000;border-color:var(--neon)}
+
+/* AUTH */
+.auth-card{width:100%;max-width:360px;background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:26px 22px}
+.auth-logo{text-align:center;margin-bottom:22px}
+.auth-logo .al-icon{font-size:26px;margin-bottom:6px}
+.auth-logo h2{font-size:20px;font-weight:800}
+.auth-logo h2 em{color:var(--neon);font-style:normal}
+.auth-logo p{font-size:12px;color:var(--text2);margin-top:3px;font-weight:400}
+.btn-google{width:100%;background:#fff;color:#111;border:none;border-radius:var(--r2);padding:12px;display:flex;align-items:center;justify-content:center;gap:9px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;margin-bottom:14px}
+.btn-google:hover{background:#f0f0f0}
+.g-ico{width:18px;height:18px;flex-shrink:0;background:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="%234285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="%2334A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="%23FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="%23EA4335"/></svg>') center/contain no-repeat}
+.sep{display:flex;align-items:center;gap:9px;margin-bottom:14px}
+.sep span{font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:var(--border)}
+.af{margin-bottom:11px}
+.af label{font-size:10px;font-weight:800;color:var(--neon);letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:5px}
+.af input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);padding:11px 40px 11px 13px;font-family:'Syne',sans-serif;font-size:13px;color:var(--text);outline:none;transition:all .2s;-webkit-appearance:none}
+.af input:focus{border-color:var(--neon);box-shadow:0 0 0 3px var(--neon-glow2)}
+.pass-wrap{position:relative}
+.pass-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:15px;color:var(--text3)}
+.btn-auth{width:100%;background:linear-gradient(135deg,var(--neon),var(--neon2));border:none;border-radius:var(--r2);padding:12px;margin-top:3px;font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:#000;cursor:pointer;transition:all .2s}
+.btn-auth:hover{opacity:.88}
+.auth-footer{text-align:center;font-size:11px;color:var(--text3);margin-top:14px;font-weight:400}
+.auth-footer a{color:var(--neon);text-decoration:none;cursor:pointer}
+.forgot-link{text-align:right;font-size:11px;color:var(--neon);cursor:pointer;margin-top:-7px;margin-bottom:10px;display:block}
+.form-err{font-size:11px;color:var(--red);margin-top:-7px;margin-bottom:8px;display:none}
+.form-err.show{display:block}
+.strength-bar{height:3px;border-radius:99px;margin-top:5px;background:var(--border);overflow:hidden}
+.strength-fill{height:100%;border-radius:99px;transition:all .3s;width:0%}
+.reset-card{width:100%;max-width:340px;background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:26px 22px;text-align:center}
+.reset-card .ri{font-size:32px;margin-bottom:12px}
+.reset-card h3{font-size:17px;font-weight:800;margin-bottom:6px}
+.reset-card p{font-size:12px;color:var(--text2);margin-bottom:18px;font-weight:400}
+
+/* PROFILE */
+#page-profile{padding:16px 14px 24px;max-width:480px;margin:0 auto}
+.profile-top{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r3);padding:16px;margin-bottom:14px}
+.prof-av{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--neon),var(--neon2));display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#000;flex-shrink:0;box-shadow:0 0 20px var(--neon-glow)}
+.prof-info h3{font-size:16px;font-weight:800}
+.prof-info p{font-size:12px;color:var(--text2);font-weight:400}
+.plan-chip{display:inline-flex;align-items:center;gap:4px;background:rgba(0,180,255,.1);border:1px solid rgba(0,180,255,.2);border-radius:99px;padding:3px 10px;font-size:10px;font-weight:700;color:var(--neon);margin-top:4px}
+.pref-list{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:12px}
+.pref-item{display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .2s}
+.pref-item:last-child{border:none}
+.pref-item:hover{background:var(--surface2)}
+.pref-icon{font-size:18px;width:28px;text-align:center;flex-shrink:0}
+.pref-label{flex:1;font-size:13px;font-weight:600}
+.pref-val{font-size:12px;color:var(--text2);font-weight:400}
+.pref-arrow{color:var(--text3);font-size:14px}
+.toggle{width:40px;height:22px;border-radius:99px;background:var(--border2);position:relative;cursor:pointer;transition:background .2s;border:none;flex-shrink:0}
+.toggle.on{background:var(--neon)}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s}
+.toggle.on::after{transform:translateX(18px)}
+.btn-logout{width:100%;padding:13px;border-radius:var(--r2);font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:1px solid var(--red-b);background:var(--red-bg);color:var(--red);display:flex;align-items:center;justify-content:center;gap:7px;margin-top:4px}
+
+/* PLANS */
+#page-plans{padding:16px 14px 24px;max-width:480px;margin:0 auto}
+.plan-hero{text-align:center;padding:16px 0 20px}
+.plan-hero h2{font-size:22px;font-weight:800;margin-bottom:6px}
+.plan-hero p{font-size:13px;color:var(--text2);font-weight:400}
+.plan-cards{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.plan-card-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r3);padding:18px;position:relative}
+.plan-card-item.popular{border-color:var(--neon);box-shadow:0 0 30px rgba(0,180,255,.08)}
+.pop-tag{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--neon);color:#000;font-size:10px;font-weight:800;padding:3px 14px;border-radius:99px;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap}
+.plan-name{font-size:11px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px}
+.plan-price{font-size:30px;font-weight:800;margin-bottom:2px}
+.plan-price span{font-size:13px;font-weight:400;color:var(--text2)}
+.plan-desc{font-size:12px;color:var(--text2);margin-bottom:14px;font-weight:400}
+.plan-feats{list-style:none;margin-bottom:16px}
+.plan-feats li{font-size:12px;padding:4px 0;color:var(--text2);font-weight:400;display:flex;align-items:center;gap:7px}
+.plan-feats li::before{content:'✓';color:var(--green);font-weight:800;font-size:12px;flex-shrink:0}
+.btn-plan{width:100%;padding:12px;border-radius:var(--r2);font-family:'Syne',sans-serif;font-size:13px;font-weight:800;cursor:pointer;border:1px solid var(--border2);background:var(--surface2);color:var(--text);transition:all .2s}
+.plan-card-item.popular .btn-plan{background:linear-gradient(135deg,var(--neon),var(--neon2));color:#000;border:none}
+.pix-note{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:13px;display:flex;align-items:center;gap:10px;font-size:12px;color:var(--text2);font-weight:400}
+
+/* ADMIN */
+#page-admin{padding:16px 14px 24px;max-width:480px;margin:0 auto}
+.adm-badge{display:inline-block;background:rgba(255,179,0,.1);color:var(--yellow);border:1px solid rgba(255,179,0,.22);font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;border-radius:99px;margin-bottom:10px}
+.metrics-g{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}
+.met-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px}
+.met-card .ml{font-size:10px;color:var(--text3);font-weight:400;margin-bottom:5px}
+.met-card .mv{font-size:24px;font-weight:800}
+.met-card .mc{font-size:10px;margin-top:3px;font-weight:600}
+.cup{color:var(--green)}.cdn{color:var(--red)}
+.adm-sec{margin-bottom:16px}
+.adm-sec-t{font-size:10px;font-weight:800;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.adm-sec-t::after{content:'';flex:1;height:1px;background:var(--border)}
+.act-item{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--border);font-size:12px}
+.act-item:last-child{border:none}
+.act-pl{font-family:'DM Mono',monospace;font-size:13px;flex:1;font-weight:500}
+.act-t{color:var(--text3);font-size:10px}
+.wh-item{display:flex;align-items:center;gap:11px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:11px 13px;margin-bottom:7px;cursor:pointer;transition:background .2s}
+.wh-item:hover{background:var(--surface2)}
+.wh-ico{width:32px;height:32px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.wh-info{flex:1}
+.wh-info h4{font-size:12px;font-weight:700;margin-bottom:2px}
+.wh-info p{font-size:11px;color:var(--text2);font-weight:400}
+.wh-tag{font-size:10px;font-weight:700;padding:3px 8px;border-radius:99px}
+.wh-pending{background:var(--yellow-bg);color:var(--yellow);border:1px solid var(--yellow-b)}
+.wh-ready{background:var(--green-bg);color:var(--green);border:1px solid var(--green-b)}
+.wh-soon{background:var(--purple-bg);color:var(--purple);border:1px solid rgba(167,139,250,.2)}
+.chart-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:9px}
+.bar-chart{display:flex;align-items:flex-end;gap:6px;height:60px}
+.bc-bar{flex:1;border-radius:4px 4px 0 0;background:linear-gradient(180deg,var(--neon),var(--neon2));opacity:.7;transition:opacity .2s;cursor:pointer}
+.bc-bar:hover{opacity:1}
+.bar-labels{display:flex;gap:6px;margin-top:5px}
+.bar-labels span{flex:1;text-align:center;font-size:9px;color:var(--text3);font-family:'DM Mono',monospace}
+
+/* NOTIFICATIONS */
+.notif-panel{position:fixed;top:54px;right:0;left:0;z-index:300;max-width:480px;margin:0 auto;background:var(--bg2);border:1px solid var(--border2);border-top:none;border-radius:0 0 var(--r3) var(--r3);padding:12px 14px;display:none;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.notif-panel.open{display:block}
+.notif-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.notif-hdr span{font-size:12px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.8px}
+.notif-clear{font-size:11px;color:var(--neon);cursor:pointer;background:none;border:none;font-family:'Syne',sans-serif;font-weight:700}
+.notif-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.notif-item:last-child{border:none}
+.ni-ico{font-size:16px;flex-shrink:0;margin-top:1px}
+.ni-txt{flex:1}
+.ni-txt b{font-size:12px;font-weight:700;display:block;margin-bottom:2px}
+.ni-txt p{font-size:11px;color:var(--text2);font-weight:400}
+.ni-time{font-size:10px;color:var(--text3);flex-shrink:0}
+.ni-unread{width:7px;height:7px;border-radius:50%;background:var(--neon);flex-shrink:0;margin-top:4px}
+
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:0;right:0;z-index:150;background:rgba(8,12,20,.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--border);display:flex;align-items:center;height:60px}
+.bnav-inner{display:flex;width:100%;max-width:480px;margin:0 auto}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;padding:6px 4px;transition:all .2s;color:var(--text3);border:none;background:transparent;font-family:'Syne',sans-serif}
+.ni.active{color:var(--neon)}
+.ni:hover{color:var(--text2)}
+.ni-ic{font-size:20px;line-height:1}
+.ni-lbl{font-size:9px;font-weight:800;letter-spacing:.4px;text-transform:uppercase}
+
+/* TOAST */
+.toast{position:fixed;top:62px;left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--border2);border-radius:var(--r);padding:9px 18px;font-size:12px;font-weight:700;color:var(--text);z-index:999;opacity:0;pointer-events:none;transition:opacity .28s;white-space:nowrap;box-shadow:0 4px 24px rgba(0,0,0,.5);max-width:90vw;text-align:center}
+.toast.show{opacity:1}
+
+/* SHARE MODAL */
+.share-modal,.deploy-modal{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.78);display:none;align-items:flex-end;justify-content:center}
+.share-modal.open,.deploy-modal.open{display:flex}
+.share-sheet{width:100%;max-width:480px;background:var(--bg2);border:1px solid var(--border2);border-radius:20px 20px 0 0;padding:18px 16px 40px}
+.deploy-sheet{width:100%;max-width:480px;background:var(--bg2);border:1px solid var(--border2);border-radius:20px 20px 0 0;padding:20px 18px 40px;max-height:88vh;overflow-y:auto}
+.d-handle{width:40px;height:4px;border-radius:99px;background:var(--border2);margin:0 auto 18px}
+.share-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+.share-opt{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer}
+.share-ico{width:44px;height:44px;border-radius:50%;background:var(--surface);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:20px;transition:all .18s}
+.share-ico:hover{border-color:var(--border3)}
+.share-lbl{font-size:10px;color:var(--text2);font-weight:600;text-align:center}
+.share-link-box{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);padding:10px 12px;font-family:'DM Mono',monospace;font-size:11px;color:var(--neon);word-break:break-all;margin-top:8px;cursor:pointer}
+.d-step{display:flex;gap:13px;margin-bottom:16px}
+.d-num{width:26px;height:26px;border-radius:50%;background:var(--neon);color:#000;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.d-content h4{font-size:14px;font-weight:700;margin-bottom:5px}
+.d-content p{font-size:12px;color:var(--text2);font-weight:400;line-height:1.55;margin-bottom:6px}
+.code-block{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);padding:10px 12px;font-family:'DM Mono',monospace;font-size:11px;color:var(--neon);margin-bottom:4px;word-break:break-all;line-height:1.6;cursor:pointer}
+.code-block .cm{color:var(--text3)}
+.deploy-link{display:flex;align-items:center;gap:8px;background:rgba(0,180,255,.07);border:1px solid rgba(0,180,255,.18);border-radius:var(--r2);padding:10px 12px;font-size:12px;color:var(--neon);font-weight:600;text-decoration:none;margin-top:4px}
+.footer-note{text-align:center;padding:12px 16px;font-size:10px;color:var(--text3);border-top:1px solid var(--border);line-height:1.65;font-weight:400;margin-bottom:8px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo" onclick="showPage('home')">
+    <div class="logo-icon">📡</div>
+    RADAR <em>RENAJUD</em>
+  </div>
+  <div class="hdr-r" id="hdr-right">
+    <button class="btn-xs btn-ghost" onclick="showPage('login')">Entrar</button>
+    <button class="btn-xs btn-neon" onclick="showPage('register')">Criar conta</button>
+  </div>
+</header>
+
+<div class="notif-panel" id="notif-panel">
+  <div class="notif-hdr">
+    <span>Notificações</span>
+    <button class="notif-clear" onclick="clearNotifs()">Limpar tudo</button>
+  </div>
+  <div id="notif-list"></div>
+</div>
+
+<!-- HOME -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="badge-pill"><span class="bdot"></span>Sistema ativo · RENAJUD 2025</div>
+    <h1>Veja o risco<br>antes da <em>compra.</em></h1>
+    <p>Consulte restrições judiciais, financeiras e alertas de apreensão de qualquer veículo em segundos.</p>
+    <div class="s-card">
+      <div class="f-label">🚗 Placa <span class="req">*</span></div>
+      <div class="iw"><input type="text" id="ip-placa" placeholder="ABC1D23" maxlength="8" oninput="fmtPlaca(this)" autocomplete="off" inputmode="text"><span class="iico">🔍</span></div>
+      <div class="sep-or">dados opcionais</div>
+      <div class="f-label">📋 RENAVAM <span class="opt">opcional</span></div>
+      <div class="iw"><input type="text" id="ip-renavam" placeholder="00000000000" maxlength="11" inputmode="numeric"></div>
+      <div class="f-label">👤 CPF proprietário <span class="opt">opcional</span></div>
+      <div class="iw"><input type="text" id="ip-cpf" placeholder="000.000.000-00" maxlength="14" oninput="fmtCPF(this)" inputmode="numeric"></div>
+      <button class="btn-analyze" onclick="startAnalysis()">📡 ANALISAR VEÍCULO</button>
+      <div class="sec-note">🔒 Criptografado · Bases públicas automatizadas</div>
+    </div>
+  </div>
+  <div class="feat-wrap">
+    <div class="feat-grid">
+      <div class="feat-card"><div class="ficon">⚖️</div><h3>Processos judiciais</h3><p>Varredura CNJ e tribunais estaduais em tempo real.</p></div>
+      <div class="feat-card"><div class="ficon">🔒</div><h3>Alienação fiduciária</h3><p>Verifica financiamentos e garantias ativas.</p></div>
+      <div class="feat-card"><div class="ficon">🚨</div><h3>Busca e apreensão</h3><p>Alertas de ordens judiciais em aberto.</p></div>
+      <div class="feat-card"><div class="ficon">🔨</div><h3>Alerta de leilão</h3><p>Histórico de leilões judiciais e risco ativo.</p></div>
+    </div>
+  </div>
+  <div class="stats-row">
+    <div><div class="stat-num">48k+</div><div class="stat-lbl">Consultas hoje</div></div>
+    <div><div class="stat-num">99.2%</div><div class="stat-lbl">Precisão</div></div>
+    <div><div class="stat-num">&lt;3s</div><div class="stat-lbl">Resposta</div></div>
+  </div>
+  <div class="footer-note">As informações apresentadas possuem caráter consultivo com base em dados públicos e automatizados.</div>
+</div>
+
+<!-- LOADING -->
+<div id="page-loading" class="page flex-center">
+  <div class="ld-wrap">
+    <div class="ld-radar">
+      <div class="ld-ring"></div><div class="ld-ring"></div><div class="ld-ring"></div><div class="ld-ring"></div>
+      <div class="ld-sweep"></div><div class="ld-center">📡</div>
+    </div>
+    <div class="ld-title">Analisando veículo</div>
+    <p class="ld-sub" id="ld-placa">Placa: —</p>
+    <div class="ld-steps">
+      <div class="ld-step" id="ls1"><div class="ld-ico">1</div><span>Consultando bases jurídicas (RENAJUD)...</span></div>
+      <div class="ld-step" id="ls2"><div class="ld-ico">2</div><span>Verificando alienação fiduciária...</span></div>
+      <div class="ld-step" id="ls3"><div class="ld-ico">3</div><span>Analisando risco de apreensão...</span></div>
+      <div class="ld-step" id="ls4"><div class="ld-ico">4</div><span>Cruzando dados CNJ e DETRAN...</span></div>
+      <div class="ld-step" id="ls5"><div class="ld-ico">5</div><span>Calculando score de risco...</span></div>
+    </div>
+    <div class="prog-wrap"><div class="prog-bar" id="prog-bar"></div></div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="page-result" class="page">
+  <div style="max-width:480px;margin:0 auto;padding:14px 14px 0">
+    <div class="res-top">
+      <div class="plate-tag" id="r-plate">🚗 -------</div>
+      <p>Relatório completo de risco judicial</p>
+    </div>
+    <div class="rv-card">
+      <div class="rv-lbl">📡 Radar de Apreensão</div>
+      <div class="rv-vis" id="rv-vis">
+        <div class="rvr"></div><div class="rvr"></div><div class="rvr"></div><div class="rvr"></div>
+        <div class="rv-ch h"></div><div class="rv-ch v"></div>
+        <div class="rv-swp" id="rv-swp"></div>
+        <div class="rv-ctr" id="rv-ctr"></div>
+      </div>
+      <div class="rv-score" id="rv-score">—</div>
+      <div class="rv-score-lbl">Score de Risco (0 = seguro · 100 = crítico)</div>
+      <div class="status-pill" id="r-pill">— —</div>
+    </div>
+    <div class="sec-title">Verificações detalhadas</div>
+    <div class="checks-list" id="chk-list"></div>
+    <div class="rec-box" id="rec-box">
+      <div class="rec-ttl">📋 Recomendação</div>
+      <div class="rec-txt" id="rec-txt">—</div>
+    </div>
+    <div class="action-row">
+      <button class="btn-action" onclick="openShare()">📤 Compartilhar</button>
+      <button class="btn-action" onclick="exportPDF()">📄 PDF</button>
+      <button class="btn-action primary" onclick="showPage('home')">+ Nova</button>
+    </div>
+    <div class="footer-note">As informações possuem caráter consultivo com base em dados públicos e automatizados.</div>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div id="page-history" class="page">
+  <div style="max-width:480px;margin:0 auto;padding:16px 14px 24px">
+    <div class="pg-hdr"><h2>Histórico</h2><p>Suas últimas consultas realizadas</p></div>
+    <div class="credits-bar">
+      <div><div class="cr-num" id="cr-num">3</div><div class="cr-lbl">créditos</div></div>
+      <div class="cr-info"><b id="cr-plan">Plano Básico</b><p>5 consultas / mês</p></div>
+      <button class="btn-buy" onclick="showPage('plans')">Comprar +</button>
+    </div>
+    <div class="ftabs">
+      <button class="ftab active" onclick="filterHist('all',this)">Todas</button>
+      <button class="ftab" onclick="filterHist('low',this)">🟢 Baixo</button>
+      <button class="ftab" onclick="filterHist('med',this)">🟡 Atenção</button>
+      <button class="ftab" onclick="filterHist('high',this)">🔴 Alto</button>
+    </div>
+    <div id="hist-content"></div>
+    <div class="footer-note">As informações possuem caráter consultivo com base em dados públicos e automatizados.</div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="page-login" class="page flex-center">
+  <div class="auth-card">
+    <div class="auth-logo"><div class="al-icon">📡</div><h2>RADAR <em>RENAJUD</em></h2><p>Entre na sua conta</p></div>
+    <button class="btn-google" onclick="doGoogleLogin()"><div class="g-ico"></div>Continuar com Google</button>
+    <div class="sep"><span>ou</span></div>
+    <div class="af"><label>E-mail</label><input type="email" id="l-email" placeholder="seu@email.com"></div>
+    <div class="af"><label>Senha</label><div class="pass-wrap"><input type="password" id="l-pass" placeholder="••••••••"><button class="pass-toggle" onclick="togglePass('l-pass',this)" type="button">👁</button></div></div>
+    <span class="forgot-link" onclick="showPage('reset')">Esqueci minha senha →</span>
+    <div class="form-err" id="l-err">E-mail ou senha inválidos.</div>
+    <button class="btn-auth" onclick="doEmailLogin()">Entrar</button>
+    <div class="auth-footer">Não tem conta? <a onclick="showPage('register')">Criar gratuitamente</a></div>
+  </div>
+</div>
+
+<!-- REGISTER -->
+<div id="page-register" class="page flex-center">
+  <div class="auth-card">
+    <div class="auth-logo"><div class="al-icon">📡</div><h2>RADAR <em>RENAJUD</em></h2><p>Crie sua conta gratuita</p></div>
+    <button class="btn-google" onclick="doGoogleLogin()"><div class="g-ico"></div>Cadastrar com Google</button>
+    <div class="sep"><span>ou preencha</span></div>
+    <div class="af"><label>Nome completo</label><input type="text" id="r-name" placeholder="Seu nome"></div>
+    <div class="af"><label>E-mail</label><input type="email" id="r-email" placeholder="seu@email.com"></div>
+    <div class="af"><label>Senha</label><div class="pass-wrap"><input type="password" id="r-pass" placeholder="Mín. 8 caracteres" oninput="checkStrength(this)"><button class="pass-toggle" onclick="togglePass('r-pass',this)" type="button">👁</button></div><div class="strength-bar"><div class="strength-fill" id="str-bar"></div></div></div>
+    <div class="af"><label>Confirmar senha</label><div class="pass-wrap"><input type="password" id="r-pass2" placeholder="Repita a senha"><button class="pass-toggle" onclick="togglePass('r-pass2',this)" type="button">👁</button></div></div>
+    <div class="form-err" id="r-err">As senhas não coincidem.</div>
+    <button class="btn-auth" onclick="doRegister()">Criar conta gratuita</button>
+    <div class="auth-footer">Já tem conta? <a onclick="showPage('login')">Entrar</a></div>
+  </div>
+</div>
+
+<!-- RESET -->
+<div id="page-reset" class="page flex-center">
+  <div class="reset-card">
+    <div class="ri">🔐</div>
+    <h3>Recuperar senha</h3>
+    <p>Informe seu e-mail e enviaremos um link de redefinição.</p>
+    <div class="af"><label>E-mail</label><input type="email" id="rst-email" placeholder="seu@email.com"></div>
+    <button class="btn-auth" onclick="doReset()">Enviar link</button>
+    <div class="auth-footer" style="margin-top:12px"><a onclick="showPage('login')">← Voltar ao login</a></div>
+  </div>
+</div>
+
+<!-- PROFILE -->
+<div id="page-profile" class="page">
+  <div style="max-width:480px;margin:0 auto;padding:16px 14px 24px">
+    <div class="pg-hdr"><h2>Minha conta</h2></div>
+    <div class="profile-top">
+      <div class="prof-av" id="prof-av">?</div>
+      <div class="prof-info"><h3 id="prof-name">Visitante</h3><p id="prof-email">Faça login para acessar</p><div class="plan-chip">⚡ Plano Básico</div></div>
+    </div>
+    <div class="sec-title">Configurações</div>
+    <div class="pref-list">
+      <div class="pref-item" onclick="showPage('plans')"><div class="pref-icon">💳</div><div class="pref-label">Planos e créditos</div><div class="pref-val">Básico</div><div class="pref-arrow">›</div></div>
+      <div class="pref-item" onclick="showPage('history')"><div class="pref-icon">📋</div><div class="pref-label">Histórico de consultas</div><div class="pref-val" id="hist-count">0</div><div class="pref-arrow">›</div></div>
+      <div class="pref-item" onclick="openDeploy()"><div class="pref-icon">🚀</div><div class="pref-label">Publicar na Vercel</div><div class="pref-val">Grátis</div><div class="pref-arrow">›</div></div>
+      <div class="pref-item"><div class="pref-icon">🔔</div><div class="pref-label">Notificações push</div><button class="toggle on" onclick="togBtn(this,'Notificações')"></button></div>
+      <div class="pref-item"><div class="pref-icon">📊</div><div class="pref-label">Alertas de risco</div><button class="toggle on" onclick="togBtn(this,'Alertas de risco')"></button></div>
+    </div>
+    <div class="sec-title">Suporte</div>
+    <div class="pref-list">
+      <div class="pref-item" onclick="showToast('📧 suporte@radarrenajud.com.br')"><div class="pref-icon">💬</div><div class="pref-label">Falar com suporte</div><div class="pref-arrow">›</div></div>
+      <div class="pref-item" onclick="showToast('📱 Versão 2.1.0 · 2025')"><div class="pref-icon">ℹ️</div><div class="pref-label">Sobre o app</div><div class="pref-val">v2.1.0</div><div class="pref-arrow">›</div></div>
+    </div>
+    <button class="btn-logout" onclick="doLogout()">🚪 Sair da conta</button>
+    <div class="footer-note">As informações possuem caráter consultivo com base em dados públicos e automatizados.</div>
+  </div>
+</div>
+
+<!-- PLANS -->
+<div id="page-plans" class="page">
+  <div style="max-width:480px;margin:0 auto;padding:16px 14px 24px">
+    <div class="plan-hero"><h2>Planos & Preços</h2><p>Escolha o plano ideal para você</p></div>
+    <div class="plan-cards">
+      <div class="plan-card-item">
+        <div class="plan-name">Avulso</div>
+        <div class="plan-price">R$ 3<span>,90 / consulta</span></div>
+        <div class="plan-desc">Pague apenas quando precisar</div>
+        <ul class="plan-feats"><li>1 consulta por compra</li><li>Relatório PDF completo</li><li>Radar de apreensão</li><li>Validade: 30 dias</li></ul>
+        <button class="btn-plan" onclick="buyPlan('1 crédito avulso')">Comprar crédito</button>
+      </div>
+      <div class="plan-card-item popular">
+        <div class="pop-tag">⚡ MAIS POPULAR</div>
+        <div class="plan-name">Básico Mensal</div>
+        <div class="plan-price">R$ 29<span>,90 / mês</span></div>
+        <div class="plan-desc">Para quem compra veículos com frequência</div>
+        <ul class="plan-feats"><li>10 consultas por mês</li><li>Histórico ilimitado</li><li>Relatório PDF completo</li><li>Alertas por e-mail</li><li>Suporte via chat</li></ul>
+        <button class="btn-plan" onclick="buyPlan('Plano Básico Mensal')">Assinar agora</button>
+      </div>
+      <div class="plan-card-item">
+        <div class="plan-name">Pro Mensal</div>
+        <div class="plan-price">R$ 79<span>,90 / mês</span></div>
+        <div class="plan-desc">Para despachantes e revendedoras</div>
+        <ul class="plan-feats"><li>50 consultas por mês</li><li>API de integração</li><li>Relatórios em lote</li><li>Monitoramento contínuo</li><li>Suporte prioritário</li><li>Webhook para sistemas</li></ul>
+        <button class="btn-plan" onclick="buyPlan('Plano Pro Mensal')">Assinar Pro</button>
+      </div>
+    </div>
+    <div class="pix-note"><div style="font-size:20px;flex-shrink:0">💳</div><div>Pagamentos via <b>Pix</b> e <b>Stripe</b> em breve. Entre em contato com o suporte para adquirir créditos.</div></div>
+    <div class="footer-note">As informações possuem caráter consultivo com base em dados públicos e automatizados.</div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="page-admin" class="page">
+  <div style="max-width:480px;margin:0 auto;padding:16px 14px 24px">
+    <div class="adm-badge">⚡ PAINEL ADMIN</div>
+    <div class="pg-hdr"><h2>Dashboard</h2><p>Visão geral em tempo real</p></div>
+    <div class="metrics-g">
+      <div class="met-card"><div class="ml">Consultas hoje</div><div class="mv" style="color:var(--neon)">247</div><div class="mc cup">↑ 18% vs ontem</div></div>
+      <div class="met-card"><div class="ml">Usuários ativos</div><div class="mv" style="color:var(--green)">1,842</div><div class="mc cup">↑ 4% essa semana</div></div>
+      <div class="met-card"><div class="ml">Total consultas</div><div class="mv">48.3k</div><div class="mc cup">↑ 12% este mês</div></div>
+      <div class="met-card"><div class="ml">Faturamento est.</div><div class="mv" style="color:var(--yellow)">R$4.2k</div><div class="mc cup">↑ 22% vs mês ant.</div></div>
+    </div>
+    <div class="adm-sec">
+      <div class="adm-sec-t">Consultas por dia</div>
+      <div class="chart-wrap"><div class="bar-chart" id="bar-chart"></div><div class="bar-labels" id="bar-labels"></div></div>
+    </div>
+    <div class="adm-sec">
+      <div class="adm-sec-t">Atividade recente</div>
+      <div id="adm-activity"></div>
+    </div>
+    <div class="adm-sec">
+      <div class="adm-sec-t">Integrações webhook</div>
+      <div class="wh-item"><div class="wh-ico" style="background:rgba(255,64,64,.1)">⚠️</div><div class="wh-info"><h4>SENATRAN / DETRAN</h4><p>Homologação pendente</p></div><div class="wh-tag wh-pending">Pendente</div></div>
+      <div class="wh-item"><div class="wh-ico" style="background:rgba(255,64,64,.1)">⚠️</div><div class="wh-info"><h4>CNJ — Processos</h4><p>Credenciamento em andamento</p></div><div class="wh-tag wh-pending">Pendente</div></div>
+      <div class="wh-item"><div class="wh-ico" style="background:rgba(167,139,250,.1)">🔌</div><div class="wh-info"><h4>Sistemas jurídicos</h4><p>Integração em desenvolvimento</p></div><div class="wh-tag wh-soon">Em breve</div></div>
+      <div class="wh-item"><div class="wh-ico" style="background:rgba(0,230,118,.1)">✅</div><div class="wh-info"><h4>Score de risco interno</h4><p>Motor proprietário ativo</p></div><div class="wh-tag wh-ready">Ativo</div></div>
+    </div>
+    <div class="adm-sec">
+      <div class="adm-sec-t">Deploy & Infraestrutura</div>
+      <div class="wh-item" onclick="openDeploy()"><div class="wh-ico" style="background:rgba(0,180,255,.1)">🚀</div><div class="wh-info"><h4>Publicar na Vercel</h4><p>Deploy gratuito, HTTPS automático, CDN global</p></div><div class="wh-tag" style="background:rgba(0,180,255,.1);color:var(--neon);border:1px solid var(--border2)">Guia</div></div>
+    </div>
+    <div class="footer-note">As informações possuem caráter consultivo com base em dados públicos e automatizados.</div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bnav">
+  <div class="bnav-inner">
+    <button class="ni active" id="ni-home" onclick="showPage('home')"><div class="ni-ic">🏠</div><div class="ni-lbl">Início</div></button>
+    <button class="ni" id="ni-history" onclick="showPage('history')"><div class="ni-ic">📋</div><div class="ni-lbl">Histórico</div></button>
+    <button class="ni" id="ni-profile" onclick="showPage('profile')"><div class="ni-ic">👤</div><div class="ni-lbl">Conta</div></button>
+    <button class="ni" id="ni-admin" onclick="showPage('admin')"><div class="ni-ic">⚡</div><div class="ni-lbl">Admin</div></button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<!-- SHARE MODAL -->
+<div class="share-modal" id="share-modal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="share-sheet">
+    <div style="width:40px;height:4px;border-radius:99px;background:var(--border2);margin:0 auto 16px"></div>
+    <div style="font-size:15px;font-weight:800;margin-bottom:4px">Compartilhar relatório</div>
+    <div style="font-size:12px;color:var(--text2);font-weight:400">Escolha como deseja compartilhar</div>
+    <div class="share-grid">
+      <div class="share-opt" onclick="shareVia('whatsapp')"><div class="share-ico">📱</div><div class="share-lbl">WhatsApp</div></div>
+      <div class="share-opt" onclick="shareVia('copy')"><div class="share-ico">🔗</div><div class="share-lbl">Copiar link</div></div>
+      <div class="share-opt" onclick="exportPDF()"><div class="share-ico">📄</div><div class="share-lbl">PDF</div></div>
+      <div class="share-opt" onclick="shareVia('email')"><div class="share-ico">📧</div><div class="share-lbl">E-mail</div></div>
+    </div>
+    <div class="share-link-box" id="share-link" onclick="shareVia('copy')">radarrenajud.vercel.app/r/-------</div>
+  </div>
+</div>
+
+<!-- DEPLOY MODAL -->
+<div class="deploy-modal" id="deploy-modal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="deploy-sheet">
+    <div class="d-handle"></div>
+    <div style="font-size:18px;font-weight:800;margin-bottom:4px">🚀 Publicar na Vercel</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:20px;font-weight:400">Deploy gratuito, HTTPS automático, CDN global. Siga os passos:</div>
+    <div class="d-step"><div class="d-num">1</div><div class="d-content"><h4>Baixe o arquivo HTML</h4><p>Clique em Download no topo desta conversa para salvar o arquivo <code style="color:var(--neon)">radar-renajud.html</code>.</p></div></div>
+    <div class="d-step"><div class="d-num">2</div><div class="d-content"><h4>Crie uma conta na Vercel</h4><p>Acesse (gratuito, sem cartão):</p><a class="deploy-link" href="https://vercel.com/signup" target="_blank">🔗 vercel.com/signup</a></div></div>
+    <div class="d-step"><div class="d-num">3</div><div class="d-content"><h4>Crie um repositório no GitHub</h4><p>Suba o arquivo para um repositório novo, dentro de uma pasta <code style="color:var(--neon)">public/</code>, com o nome <code style="color:var(--neon)">index.html</code>.</p><a class="deploy-link" href="https://github.com/new" target="_blank">🔗 github.com/new</a></div></div>
+    <div class="d-step"><div class="d-num">4</div><div class="d-content"><h4>Importe na Vercel</h4><p>No dashboard: <b>Add New → Project</b>, conecte o GitHub e selecione o repositório.</p><div class="code-block"><span class="cm"># Configurações de build</span><br>Framework: Other<br>Build Command: (vazio)<br>Output Directory: public</div></div></div>
+    <div class="d-step"><div class="d-num">5</div><div class="d-content"><h4>✅ Pronto! Site no ar</h4><p>A Vercel gera um link como <code style="color:var(--neon)">radar-renajud.vercel.app</code> em 30 segundos. Qualquer push no GitHub atualiza o site automaticamente.</p></div></div>
+    <div class="d-step"><div class="d-num">6</div><div class="d-content"><h4>Domínio próprio (opcional)</h4><p>Em <b>Settings → Domains</b> adicione seu domínio (ex: radarrenajud.com.br). O plano Hobby da Vercel é gratuito até 100GB/mês.</p></div></div>
+    <button style="width:100%;padding:12px;border-radius:var(--r2);font-family:'Syne',sans-serif;font-size:13px;font-weight:800;cursor:pointer;border:none;background:linear-gradient(135deg,var(--neon),var(--neon2));color:#000;margin-top:8px" onclick="document.getElementById('deploy-modal').classList.remove('open')">Entendido! 🚀</button>
+  </div>
+</div>
+
+<script>
+const S={history:[],credits:3,loggedIn:false,user:null,histFilter:'all',currentPlaca:'',lastResult:null,notifs:[{icon:'🚨',title:'Bem-vindo ao Radar Renajud',text:'Faça sua primeira consulta gratuitamente.',time:'agora',unread:true},{icon:'💳',title:'3 créditos disponíveis',text:'Você tem créditos de demonstração para usar.',time:'hoje',unread:false}]};
+try{const h=localStorage.getItem('rr2_hist');if(h)S.history=JSON.parse(h)}catch(e){}
+try{const c=localStorage.getItem('rr2_cred');if(c)S.credits=parseInt(c)}catch(e){}
+try{const u=localStorage.getItem('rr2_user');if(u){S.user=JSON.parse(u);S.loggedIn=true;updateHdrLoggedIn()}}catch(e){}
+
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  const pg=document.getElementById('page-'+name);
+  if(pg)pg.classList.add('active');
+  const ni=document.getElementById('ni-'+name);
+  if(ni)ni.classList.add('active');
+  window.scrollTo({top:0,behavior:'instant'});
+  document.getElementById('notif-panel').classList.remove('open');
+  if(name==='history'){renderHistory();document.getElementById('cr-num').textContent=S.credits}
+  if(name==='profile'){updateProfileUI()}
+}
+
+function fmtPlaca(el){let v=el.value.toUpperCase().replace(/[^A-Z0-9]/g,'');el.value=v.slice(0,7);el.classList.toggle('valid',v.length===7);el.classList.toggle('invalid',v.length>0&&v.length<7)}
+function fmtCPF(el){let v=el.value.replace(/\D/g,'');if(v.length>3)v=v.slice(0,3)+'.'+v.slice(3);if(v.length>7)v=v.slice(0,7)+'.'+v.slice(7);if(v.length>11)v=v.slice(0,11)+'-'+v.slice(11);el.value=v.slice(0,14)}
+
+function startAnalysis(){
+  const placa=document.getElementById('ip-placa').value.trim();
+  if(!placa||placa.length<7){showToast('❌ Informe uma placa válida (ex: ABC1D23)');return}
+  if(S.credits<=0){showToast('❌ Sem créditos. Adquira mais em Planos.');showPage('plans');return}
+  S.currentPlaca=placa.toUpperCase();
+  document.getElementById('ld-placa').textContent='Placa: '+S.currentPlaca;
+  showPage('loading');
+  runLoader();
+}
+
+function runLoader(){
+  const steps=['ls1','ls2','ls3','ls4','ls5'];
+  const pb=document.getElementById('prog-bar');
+  steps.forEach(id=>{const el=document.getElementById(id);el.classList.remove('active','done');el.querySelector('.ld-ico').textContent=id.replace('ls','')});
+  pb.style.width='0%';
+  let i=0;
+  function next(){
+    if(i>0){const pr=document.getElementById(steps[i-1]);pr.classList.remove('active');pr.classList.add('done');pr.querySelector('.ld-ico').textContent='✓'}
+    if(i<steps.length){document.getElementById(steps[i]).classList.add('active');pb.style.width=((i+1)/steps.length*100)+'%';i++;setTimeout(next,[700,1000,1300,1600,1900][i-1]||500)}
+    else setTimeout(showResult,350);
+  }
+  next();
+}
+
+function genResult(placa){
+  let h=0;for(const c of placa)h=(h*31+c.charCodeAt(0))&0xffffffff;
+  const rnd=(a,b)=>{h=(h*1664525+1013904223)&0xffffffff;return a+Math.abs(h)%(b-a+1)};
+  const score=rnd(5,93);
+  const defs=[
+    {label:'RENAJUD',ok:'Nenhuma restrição judicial',warn:'Pendência administrativa',bad:'Restrição judicial ativa'},
+    {label:'Alienação fiduciária',ok:'Livre de financiamento',warn:'Financiamento em análise',bad:'Alienação fiduciária ativa'},
+    {label:'Processos judiciais',ok:'Sem processos vinculados',warn:'1 processo em andamento',bad:'Múltiplos processos encontrados'},
+    {label:'Busca e apreensão',ok:'Sem ordens de apreensão',warn:'Verificação pendente',bad:'⚠ Ordem de apreensão ativa'},
+    {label:'Restrições diversas',ok:'Sem restrições administrativas',warn:'Débito IPVA / DETRAN leve',bad:'Múltiplas restrições ativas'},
+    {label:'Alerta de leilão',ok:'Sem histórico de leilão',warn:'Histórico de leilão encontrado',bad:'Leilão judicial ativo detectado'},
+  ];
+  const fc=score/100;
+  return{score,checks:defs.map(d=>{h=(h*1664525+1013904223)&0xffffffff;const r=Math.abs(h)/0xffffffff;const st=r<(1-fc)?'ok':r<(1-fc*.4)?'warn':'bad';return{label:d.label,status:st,desc:d[st]}})};
+}
+
+function riskColor(s){return s<30?'var(--green)':s<65?'var(--yellow)':'var(--red)'}
+function riskBg(s){return s<30?'var(--green-bg)':s<65?'var(--yellow-bg)':'var(--red-bg)'}
+function riskBorder(s){return s<30?'var(--green-b)':s<65?'var(--yellow-b)':'var(--red-b)'}
+function riskLabel(s){return s<30?'🟢 Baixo risco':s<65?'🟡 Atenção':'🔴 Alto risco'}
+function scoreClass(s){return s<30?'sl':s<65?'sm':'sh'}
+
+function showResult(){
+  const r=genResult(S.currentPlaca);
+  S.lastResult=r;
+  S.credits=Math.max(0,S.credits-1);
+  try{localStorage.setItem('rr2_cred',S.credits)}catch(e){}
+  S.history.unshift({placa:S.currentPlaca,score:r.score,date:new Date().toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})});
+  if(S.history.length>50)S.history.pop();
+  try{localStorage.setItem('rr2_hist',JSON.stringify(S.history))}catch(e){}
+  S.notifs.unshift({icon:'📡',title:'Consulta: '+S.currentPlaca,text:'Score: '+r.score+' · '+riskLabel(r.score),time:'agora',unread:true});
+  renderResult(S.currentPlaca,r);
+  renderHistory();
+  showPage('result');
+}
+
+function renderResult(placa,res){
+  const {score,checks}=res;
+  const col=riskColor(score),bg=riskBg(score),bord=riskBorder(score);
+  document.getElementById('r-plate').innerHTML='🚗 '+placa;
+  document.getElementById('rv-score').textContent=score;
+  document.getElementById('rv-score').style.color=col;
+  document.getElementById('rv-swp').style.background='conic-gradient(from 0deg,transparent 0deg,'+(score<30?'rgba(0,230,118,.12)':score<65?'rgba(255,179,0,.12)':'rgba(255,64,64,.13)')+' 65deg,transparent 65deg)';
+  document.getElementById('rv-ctr').style.cssText='background:'+col+';box-shadow:0 0 16px '+col+'55';
+  const pill=document.getElementById('r-pill');pill.textContent=riskLabel(score);pill.style.cssText='background:'+bg+';color:'+col+';border:1px solid '+bord;
+  const vis=document.getElementById('rv-vis');
+  vis.querySelectorAll('.rv-dot').forEach(d=>d.remove());
+  checks.filter(c=>c.status==='bad').forEach((_,i)=>{const d=document.createElement('div');d.className='rv-dot';const a=Math.random()*360,r=30+Math.random()*40;d.style.cssText='width:8px;height:8px;background:var(--red);position:absolute;top:calc(50% + '+(r*Math.sin(a*Math.PI/180)).toFixed(1)+'px - 4px);left:calc(50% + '+(r*Math.cos(a*Math.PI/180)).toFixed(1)+'px - 4px);animation-delay:'+(Math.random()*1.5).toFixed(1)+'s';vis.appendChild(d)});
+  checks.filter(c=>c.status==='warn').forEach((_,i)=>{const d=document.createElement('div');d.className='rv-dot';const a=Math.random()*360,r=15+Math.random()*25;d.style.cssText='width:6px;height:6px;background:var(--yellow);position:absolute;top:calc(50% + '+(r*Math.sin(a*Math.PI/180)).toFixed(1)+'px - 3px);left:calc(50% + '+(r*Math.cos(a*Math.PI/180)).toFixed(1)+'px - 3px);animation-delay:'+(Math.random()*2).toFixed(1)+'s';vis.appendChild(d)});
+  document.getElementById('chk-list').innerHTML=checks.map(c=>'<div class="chk"><div class="chk-ico '+(c.status==='ok'?'ok':c.status==='warn'?'warn':'bad')+'">'+(c.status==='ok'?'✓':c.status==='warn'?'!':'✗')+'</div><div class="chk-info"><h4>'+c.label+'</h4><p>'+c.desc+'</p></div></div>').join('');
+  const rec=score<30?'Veículo sem indícios significativos de pendências. Recomendamos verificar documentação física antes de fechar negócio.':score<65?'Foram encontrados indícios que merecem atenção. Exija documentação completa e realize vistoria presencial antes de finalizar a compra.':'ATENÇÃO: Restrições graves identificadas. NÃO recomendamos a compra sem consultar um advogado especializado em direito automotivo.';
+  const rb=document.getElementById('rec-box');rb.style.cssText='background:'+bg+';border-color:'+bord;
+  document.getElementById('rec-txt').textContent=rec;
+}
+
+function renderHistory(){
+  document.getElementById('hist-count').textContent=S.history.length;
+  const c=document.getElementById('hist-content');
+  let f=S.history;
+  if(S.histFilter==='low')f=S.history.filter(i=>i.score<30);
+  else if(S.histFilter==='med')f=S.history.filter(i=>i.score>=30&&i.score<65);
+  else if(S.histFilter==='high')f=S.history.filter(i=>i.score>=65);
+  if(!f.length){c.innerHTML='<div class="hist-empty"><div class="ei">🔍</div><p>'+(S.history.length?'Nenhuma consulta nesta categoria.':'Nenhuma consulta ainda.\nFaça sua primeira análise!')+'</p></div>';return}
+  c.innerHTML='<div class="hist-list">'+f.map(i=>'<div class="hist-item" onclick="replayResult(\''+i.placa+'\')"><div><div class="h-plate">'+i.placa+'</div><div class="h-date">'+i.date+'</div></div><div class="h-score '+scoreClass(i.score)+'">'+i.score+'</div></div>').join('')+'</div>';
+}
+function filterHist(t,el){S.histFilter=t;document.querySelectorAll('.ftab').forEach(x=>x.classList.remove('active'));el.classList.add('active');renderHistory()}
+function replayResult(placa){S.currentPlaca=placa;renderResult(placa,genResult(placa));showPage('result')}
+
+function doGoogleLogin(){loginUser({name:'Usuário Google',email:'usuario@gmail.com',avatar:'G'});showToast('✅ Login com Google realizado!');setTimeout(()=>showPage('home'),900)}
+function doEmailLogin(){const e=document.getElementById('l-email').value.trim(),p=document.getElementById('l-pass').value;const err=document.getElementById('l-err');if(!e||!p){err.classList.add('show');return}err.classList.remove('show');loginUser({name:e.split('@')[0],email:e,avatar:e[0].toUpperCase()});showToast('✅ Bem-vindo(a)!');setTimeout(()=>showPage('home'),900)}
+function doRegister(){const n=document.getElementById('r-name').value.trim(),e=document.getElementById('r-email').value.trim(),p=document.getElementById('r-pass').value,p2=document.getElementById('r-pass2').value;const err=document.getElementById('r-err');if(!n||!e||!p){showToast('❌ Preencha todos os campos');return}if(p!==p2){err.textContent='As senhas não coincidem.';err.classList.add('show');return}if(p.length<8){err.textContent='Senha: mínimo 8 caracteres.';err.classList.add('show');return}err.classList.remove('show');loginUser({name:n,email:e,avatar:n[0].toUpperCase()});showToast('🎉 Conta criada! Bem-vindo(a), '+n+'!');setTimeout(()=>showPage('home'),900)}
+function doReset(){const e=document.getElementById('rst-email').value.trim();if(!e){showToast('❌ Informe seu e-mail');return}showToast('📧 Link enviado para '+e);setTimeout(()=>showPage('login'),1200)}
+function loginUser(u){S.user=u;S.loggedIn=true;try{localStorage.setItem('rr2_user',JSON.stringify(u))}catch(e){}updateHdrLoggedIn();updateProfileUI()}
+function doLogout(){S.user=null;S.loggedIn=false;try{localStorage.removeItem('rr2_user')}catch(e){}document.getElementById('hdr-right').innerHTML='<button class="btn-xs btn-ghost" onclick="showPage(\'login\')">Entrar</button><button class="btn-xs btn-neon" onclick="showPage(\'register\')">Criar conta</button>';showToast('👋 Até logo!');setTimeout(()=>showPage('home'),900)}
+function updateHdrLoggedIn(){if(!S.user)return;document.getElementById('hdr-right').innerHTML='<button class="notif-btn" onclick="toggleNotifs()"><span style="font-size:14px">🔔</span><div class="notif-dot" id="notif-dot"></div></button><button class="user-avatar" onclick="showPage(\'profile\')">'+(S.user.avatar||'U')+'</button>';renderNotifs()}
+function updateProfileUI(){if(!S.user)return;document.getElementById('prof-av').textContent=S.user.avatar||'?';document.getElementById('prof-name').textContent=S.user.name||'Usuário';document.getElementById('prof-email').textContent=S.user.email||''}
+
+function toggleNotifs(){document.getElementById('notif-panel').classList.toggle('open');renderNotifs()}
+function renderNotifs(){const dot=document.getElementById('notif-dot');const unread=S.notifs.filter(n=>n.unread).length;if(dot)dot.style.display=unread>0?'block':'none';const list=document.getElementById('notif-list');if(!list)return;list.innerHTML=S.notifs.slice(0,5).map(n=>'<div class="notif-item"><div class="ni-ico">'+n.icon+'</div><div class="ni-txt"><b>'+n.title+'</b><p>'+n.text+'</p></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><div class="ni-time">'+n.time+'</div>'+(n.unread?'<div class="ni-unread"></div>':'')+'</div></div>').join('');S.notifs.forEach(n=>n.unread=false)}
+function clearNotifs(){S.notifs=[];document.getElementById('notif-list').innerHTML='<div style="text-align:center;padding:20px;font-size:12px;color:var(--text3)">Sem notificações</div>';const dot=document.getElementById('notif-dot');if(dot)dot.style.display='none'}
+
+function togglePass(id,btn){const i=document.getElementById(id);if(!i)return;if(i.type==='password'){i.type='text';btn.textContent='🙈'}else{i.type='password';btn.textContent='👁'}}
+function checkStrength(el){const v=el.value;let sc=0;if(v.length>=8)sc+=25;if(v.length>=12)sc+=15;if(/[A-Z]/.test(v))sc+=20;if(/[0-9]/.test(v))sc+=20;if(/[^A-Za-z0-9]/.test(v))sc+=20;const b=document.getElementById('str-bar');b.style.width=sc+'%';b.style.background=sc<40?'var(--red)':sc<70?'var(--yellow)':'var(--green)'}
+function togBtn(el,label){el.classList.toggle('on');showToast((el.classList.contains('on')?'✅ ':'🔕 ')+label+(el.classList.contains('on')?' ativado':' desativado'))}
+function buyPlan(name){showToast('💳 Pagamento em breve! Plano: '+name)}
+
+function openShare(){const placa=S.currentPlaca||'-------';document.getElementById('share-link').textContent='radarrenajud.vercel.app/r/'+placa;document.getElementById('share-modal').classList.add('open')}
+function shareVia(via){const placa=S.currentPlaca,score=S.lastResult?S.lastResult.score:0,lbl=riskLabel(score);if(via==='whatsapp'){const t=encodeURIComponent('🚗 Radar Renajud\nPlaca: '+placa+'\nScore: '+score+'/100\n'+lbl+'\n\nradarrenajud.vercel.app');window.open('https://wa.me/?text='+t,'_blank')}else if(via==='copy'){if(navigator.clipboard)navigator.clipboard.writeText('radarrenajud.vercel.app/r/'+placa).then(()=>showToast('🔗 Link copiado!'));else showToast('🔗 radarrenajud.vercel.app/r/'+placa)}else if(via==='email'){window.location.href='mailto:?subject=Radar Renajud - '+placa+'&body=Placa: '+placa+'%0AScore: '+score+'%0A'+lbl+'%0A%0Aradarrenajud.vercel.app'}document.getElementById('share-modal').classList.remove('open')}
+
+function exportPDF(){
+  if(!S.lastResult){showToast('❌ Faça uma consulta primeiro');return}
+  document.getElementById('share-modal').classList.remove('open');
+  showToast('📄 Gerando relatório...');
+  const {score,checks}=S.lastResult;const placa=S.currentPlaca;const lbl=riskLabel(score);const date=new Date().toLocaleString('pt-BR');
+  const rows=checks.map(c=>'<tr style="border-bottom:1px solid #eee"><td style="padding:8px 4px;font-size:13px">'+c.label+'</td><td style="padding:8px 4px;font-size:13px;color:'+(c.status==='ok'?'#00a855':c.status==='warn'?'#b87800':'#cc2200')+';font-weight:700">'+(c.status==='ok'?'✓ OK':c.status==='warn'?'! Atenção':'✗ Alerta')+'</td><td style="padding:8px 4px;font-size:12px;color:#555">'+c.desc+'</td></tr>').join('');
+  const scoreColor=score<30?'#00a855':score<65?'#b87800':'#cc2200';
+  const html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Radar Renajud - '+placa+'</title><style>body{font-family:Arial,sans-serif;max-width:700px;margin:0 auto;padding:32px;color:#111}h1{color:#0070ff;font-size:22px}table{width:100%;border-collapse:collapse}th{background:#f5f5f5;text-align:left;padding:8px 4px;font-size:12px}.footer{margin-top:32px;font-size:10px;color:#999;border-top:1px solid #eee;padding-top:12px}@media print{body{padding:16px}}</style></head><body><h1>📡 RADAR RENAJUD</h1><p style="color:#555;font-size:12px">Gerado em: '+date+'</p><hr style="margin:12px 0"><p style="font-size:13px;color:#555;margin-bottom:4px">PLACA</p><p style="font-size:24px;font-weight:700;letter-spacing:3px;margin:0">'+placa+'</p><p style="font-size:13px;color:#555;margin:16px 0 4px">SCORE DE RISCO</p><p style="font-size:48px;font-weight:900;color:'+scoreColor+';margin:0">'+score+'<span style="font-size:18px">/100</span></p><p style="display:inline-block;padding:6px 18px;border-radius:99px;font-weight:700;background:'+(score<30?'#e6f9ee':score<65?'#fff8e6':'#ffe6e6')+';color:'+scoreColor+';margin:8px 0 16px">'+lbl+'</p><h2 style="font-size:14px;color:#555;margin-top:16px">VERIFICAÇÕES DETALHADAS</h2><table><thead><tr><th>ITEM</th><th>STATUS</th><th>DETALHE</th></tr></thead><tbody>'+rows+'</tbody></table><div class="footer">As informações apresentadas possuem caráter consultivo com base em dados públicos e automatizados. Radar Renajud — radarrenajud.vercel.app</div></body></html>';
+  const b=new Blob([html],{type:'text/html'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='RadarRenajud_'+placa+'_'+Date.now()+'.html';a.click();URL.revokeObjectURL(u);
+  setTimeout(()=>showToast('✅ Arquivo gerado! Abra e imprima como PDF com Ctrl+P.'),500);
+}
+
+function openDeploy(){document.getElementById('deploy-modal').classList.add('open')}
+
+function buildAdminChart(){
+  const data=[89,112,98,134,167,201,247],days=['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],max=Math.max(...data);
+  const bc=document.getElementById('bar-chart'),bl=document.getElementById('bar-labels');
+  if(!bc)return;
+  bc.innerHTML=data.map(v=>'<div class="bc-bar" style="height:'+(v/max*56+4)+'px"></div>').join('');
+  bl.innerHTML=days.map(d=>'<span>'+d+'</span>').join('');
+  const plates=[['QWE4R56',78],['GHJ7K89',15],['ABC1D23',42],['XYZ2A34',91],['MNO5P67',23],['TUV8W90',55]];
+  const times=['agora','há 2min','há 5min','há 9min','há 14min','há 20min'];
+  document.getElementById('adm-activity').innerHTML=plates.map(([p,s],i)=>'<div class="act-item"><div class="h-score '+scoreClass(s)+'" style="width:32px;height:32px;font-size:11px">'+s+'</div><div class="act-pl">'+p+'</div><div class="act-t">'+times[i]+'</div></div>').join('');
+}
+buildAdminChart();
+renderHistory();
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800)}
+
+document.addEventListener('click',e=>{
+  const panel=document.getElementById('notif-panel');
+  if(!panel.contains(e.target)&&!e.target.closest('.notif-btn'))panel.classList.remove('open');
+});
+</script>
+</body>
+</html>
